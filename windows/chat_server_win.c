@@ -1,3 +1,4 @@
+#include <winsock2.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +34,7 @@ int main(int argc, char* argv[]) {
     hServerSock = socket(AF_INET, SOCK_STREAM, 0);
     memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = inet_addr(INADDR_ANY);
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(atoi(argv[1]));
 
     if (bind(hServerSock, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
