@@ -71,7 +71,7 @@ unsigned WINAPI recvMsg(void* arg) {
     char nameMsg[NAME_SIZE + BUF_SIZE];
     int strLen;
     while (1) {
-        strLen = recv(serverSock, nameMsg, strLen, 0);
+        strLen = recv(serverSock, nameMsg, sizeof(nameMsg), 0);
         if (strLen == -1) {
             errorHandling("recvMsg() error!");
         }
