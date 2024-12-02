@@ -34,10 +34,10 @@ int main(int argc, char* argv[]) {
   SOCKADDR_IN servAddr;
   int recvBytes, flags = 0;
 
-  if (argc != 2) {
-    printf("Usage: %s <port>\n", argv[0]);
-    return -1;
-  }
+  // if (argc != 2) {
+  //   printf("Usage: %s <port>\n", argv[0]);
+  //   return -1;
+  // }
   if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
     errorHandling("WSAStartup() error.");
   }
@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
   hServSock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
   servAddr.sin_family = AF_INET;
   servAddr.sin_addr.s_addr = INADDR_ANY;
-  servAddr.sin_port = htons(atoi(argv[1]));
+  servAddr.sin_port = htons(9527);
 
   if (bind(hServSock, (SOCKADDR*)&servAddr, sizeof(servAddr)) == SOCKET_ERROR) {
     errorHandling("bind() error.");
@@ -80,7 +80,8 @@ int main(int argc, char* argv[]) {
     ioInfo->wsaBuf.buf = ioInfo->buf;
     ioInfo->wsaBuf.len = BUF_SIZE;
     ioInfo->mode = READ;
-    WSARecv(handleInfo->clieSock, &(ioInfo->wsaBuf), 1, &recvBytes, &flags, &(ioInfo->overlapped), NULL);
+    WSARecv(handleInfo->clieSock, &(ioInfo->wsaBuf), 1, &recvBytes, &flags,
+            &(ioInfo->overlapped), NULL);
   }
   return 0;
 }
@@ -92,9 +93,10 @@ DWORD WINAPI echoThreadFunc(LPVOID pComPort) {
   LPPER_HANDLE_DATA handleInfo;
   LPPER_IO_DATA ioInfo;
   DWORD flags = 0;
-  
+
   while (1) {
-    GetQueuedCompletionStatus(hComPort, &bytesTrans, (LPDWORD)&handleInfo, (LPOVERLAPPED)&ioInfo, INFINITE);
+    GetQueuedCompletionStatus(hComPort, &bytesTrans, (LPDWORD)&handleInfo,
+                              (LPOVERLAPPED)&ioInfo, INFINITE);
     sock = handleInfo->clieSock;
 
     if (ioInfo->mode == READ) {
@@ -115,7 +117,8 @@ DWORD WINAPI echoThreadFunc(LPVOID pComPort) {
       ioInfo->wsaBuf.buf = ioInfo->buf;
       ioInfo->wsaBuf.len = BUF_SIZE;
       ioInfo->mode = READ;
-      WSARecv(sock, &(ioInfo->wsaBuf), 1, NULL, &flags, &(ioInfo->overlapped), NULL);
+      WSARecv(sock, &(ioInfo->wsaBuf), 1, NULL, &flags, &(ioInfo->overlapped),
+              NULL);
     } else {
       puts("message sent.");
       free(ioInfo);
